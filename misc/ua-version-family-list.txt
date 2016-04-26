@@ -1,0 +1,73 @@
+Amazon Silk
+AppleMail
+Baidu Browser
+Baidu Explorer
+BlackBerry
+BlackBerry WebKit
+Bon Echo
+CFNetwork
+Chrome
+Chrome Frame
+Chrome Mobile
+Chrome Mobile iOS
+Comodo Dragon
+Conkeror
+Edge Mobile
+Facebook
+FacebookBot
+Firefox
+Firefox Alpha
+Firefox Beta
+Firefox iOS
+Firefox Mobile
+GooglePlusBot
+iBrowser Mini
+IE
+IE Large Screen
+IE Mobile
+Konqueror
+LuaKit
+Mail.ru Chromium Browser
+Maxthon
+MicroB
+Mobile Safari
+Mobile Safari UIWebView
+MSIECrawler
+My Internet Browser
+NCSA Mosaic
+NetFront
+NetFront NX
+Netscape
+Nokia Browser
+Nokia OSS Browser
+Nokia Services (WAP) Browser
+Obigo
+ONE Browser
+Opera
+Opera Coast
+Opera Mini
+Opera Mobile
+Outlook
+Ovi Browser
+Pale Moon (Firefox Variant)
+Palm Blazer
+Palm Pre
+Phantom Browser
+PingdomBot
+Polaris
+Python Requests
+QQ Browser
+QQ Browser Mini
+QQ Browser Mobile
+RackspaceBot
+Rekonq
+Safari
+Sogou Explorer
+Swiftfox
+Teleca Browser
+Thunderbird
+Tizen Browser
+UC Browser
+WebKit Nightly
+webOS Browser
+Yandex Browser

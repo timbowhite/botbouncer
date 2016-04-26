@@ -1,0 +1,7 @@
+Hello.  Your IP address has been determined to be making automated requests and has been banned from accessing this website.
+
+<% if (adminemail){ %>
+If you think this ban was made in error, or are experiencing problems with your payment, please contact the webiste administrator at <%= adminemail %> 
+<% 
+}
+%>

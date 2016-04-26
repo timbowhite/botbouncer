@@ -1,0 +1,18 @@
+Hello.  Your IP address is making unauthorized automated requests to this website and access has been temporarily banned.
+
+<% if (locals.payments && locals.payments.bitcoin){ %>To restore immediate access to this website, make the following Bitcoin payment within the next <%= locals.payments.bitcoin.expires %>:
+
+Bitcoin Address: <%= locals.payments.bitcoin.address %>
+Bitcoin Amount: <%= locals.payments.bitcoin.amountOwed %> <%= locals.payments.bitcoin.amountCurrencyCode %><% 
+if (locals.payments.bitcoin.qrCodeUrl){%>
+QR code: <%- locals.payments.bitcoin.qrCodeUrl %><% } %>
+
+After your full payment has reached <%= locals.payments.bitcoin.confirmationsReq %> confirmation(s), your IP address will be granted access for <%= locals.allowedFor %>.
+
+<% 
+} 
+
+if (locals.adminEmail){ %>If you think this ban was made in error, or you are experiencing problems with your payment, please contact the website administrator at <%= locals.adminEmail %> and include your IP address (<%= locals.ip %>) in your message. 
+<% 
+}
+%>
