@@ -1,7 +1,7 @@
 {
   "name": "botbouncer",
-  "version": "0.0.1",
-  "description": "Detect and ban bad bots until they pay you Bitcoin.",
+  "version": "0.0.2",
+  "description": "Detect bots and ban them from your website until they pay you Bitcoin.",
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test ./node_modules/.bin/mocha --recursive --reporter spec test"

@@ -174,7 +174,7 @@ Q().then(function(){
                             return Q.ninvoke(
                                 Payment, 
                                 'update', 
-                                {visitor_id: visitor.id, status_id: ps.PENDING}, 
+                                {visitor_id: visitor.id, status_id: ps.PENDING, updated: moment.utc().toDate()}, 
                                 {status_id: ps.EXPIRED}
                             );
                         }
