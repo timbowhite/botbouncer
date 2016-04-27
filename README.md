@@ -1,5 +1,12 @@
+
+## botbouncer
+botbouncer is node.js/express middleware that performs basic bot detection and bans detected bots until they pay you Bitcoin.
+
+It's intended for use by websites running on a single app server that receive <= 200K hits/day.
+
+**This is experimental software and any usage is at your own risk.**
+
 <!-- toc -->
-* [botbouncer](#botbouncer)
 * [Demo](#demo)
 * [Requirements](#requirements)
 * [Install and setup](#install-and-setup)
@@ -46,14 +53,6 @@
 
     
 <!-- toc stop -->
-
-
-## botbouncer
-botbouncer is node.js/express middleware that performs basic bot detection and bans detected bots until they pay you Bitcoin.
-
-It's intended for use by websites running on a single app server that receive <= 200K hits/day.
-
-**This is experimental software and any usage is at your own risk.**
 
 ## Demo
 Visit http://botbouncer.xyz and refresh the page a few times to get banned.  Or just run the following from a *nix console:
