@@ -1,11 +1,61 @@
-##botbouncer
+<!-- toc -->
+* [botbouncer](#botbouncer)
+* [Demo](#demo)
+* [Requirements](#requirements)
+* [Install and setup](#install-and-setup)
+  * [Minimal usage example](#minimal-usage-example)
+  * [Full usage example: initialized using Q promise library and all options specified](#full-usage-example-initialized-using-q-promise-library-and-all-options-specified)
+* [How does it work?](#how-does-it-work)
+* [How does it work (technically)?](#how-does-it-work-technically)
+  * [Bot detection](#bot-detection)
+  * [Response handling](#response-handling)
+  * [Payments](#payments)
+  * [Database](#database)
+      * [Schema](#schema)
+* [Config](#config)
+* [Methods](#methods)
+  * [Example](#example)
+* [Events](#events)
+* [Best practices](#best-practices)
+* [FAQ](#faq)
+  * [I don't have a Bitcoin BIP32 HD master public key.  How do I get one?](#i-dont-have-a-bitcoin-bip32-hd-master-public-key--how-do-i-get-one)
+  * [Will botbouncer slow down my website?](#will-botbouncer-slow-down-my-website)
+  * [Will Google penalize my website for cloaking?](#will-google-penalize-my-website-for-cloaking)
+  * [I don't use Node.js and/or Express. Can I still use botbouncer?](#i-dont-use-nodejs-andor-express-can-i-still-use-botbouncer)
+  * [Don't you know that you can't equate an IP address with a single visitor because of NAT, proxies, VPN's, what have you?](#dont-you-know-that-you-cant-equate-an-ip-address-with-a-single-visitor-because-of-nat-proxies-vpns-what-have-you)
+  * [So that means if a bot is using a proxy/VPN and pays for access to my website, then any other bots using the same proxy/VPN get access to my website for free?](#so-that-means-if-a-bot-is-using-a-proxyvpn-and-pays-for-access-to-my-website-then-any-other-bots-using-the-same-proxyvpn-get-access-to-my-website-for-free)
+  * [Can a regular human visitor get banned by botbouncer?](#can-a-regular-human-visitor-get-banned-by-botbouncer)
+  * [What recourse does a regular human visitor have if they are determined to be a bot and are banned?](#what-recourse-does-a-regular-human-visitor-have-if-they-are-determined-to-be-a-bot-and-are-banned)
+  * [Couldn't a banned bot operator pose as a regular human visitor and just email the admin asking for access?](#couldnt-a-banned-bot-operator-pose-as-a-regular-human-visitor-and-just-email-the-admin-asking-for-access)
+  * [Can the entire payments functionality be disabled?](#can-the-entire-payments-functionality-be-disabled)
+  * [Bitcoin is stupid and dead. Can you make this thing work with Paypal?](#bitcoin-is-stupid-and-dead-can-you-make-this-thing-work-with-paypal)
+  * [Can I require everyone to pay me for access to my website, even if they're not a bot?](#can-i-require-everyone-to-pay-me-for-access-to-my-website-even-if-theyre-not-a-bot)
+  * [Will botbouncer prevent (D)DoS attacks?](#will-botbouncer-prevent-ddos-attacks)
+  * [I use cluster to fork my express server process. Is botbouncer multi-process safe?](#i-use-cluster-to-fork-my-express-server-process-is-botbouncer-multi-process-safe)
+    * [How to do this](#how-to-do-this)
+  * [Does botbouncer set any machine readable response headers indicating the payment method, amount, etc?](#does-botbouncer-set-any-machine-readable-response-headers-indicating-the-payment-method-amount-etc)
+  * [Do these headers follow any kind of standardized protocol?](#do-these-headers-follow-any-kind-of-standardized-protocol)
+  * [Why is the banned response message in plain text and not HTML?](#why-is-the-banned-response-message-in-plain-text-and-not-html)
+  * [How does botbouncer handle errors?](#how-does-botbouncer-handle-errors)
+  * [Does botbouncer work on windows?](#does-botbouncer-work-on-windows)
+  * [Will you add feature ABC and cool thing XYZ?](#will-you-add-feature-abc-and-cool-thing-xyz)
+  * [Do you have a bitcoin tipping address?](#do-you-have-a-bitcoin-tipping-address)
+* [Release history](#release-history)
+  * [2016-04-27 v0.0.4](#2016-04-27-v004)
+* [About](#about)
+
+    
+<!-- toc stop -->
+
+
+## botbouncer
 botbouncer is node.js/express middleware that performs basic bot detection and bans detected bots until they pay you Bitcoin.
 
 It's intended for use by websites running on a single app server that receive <= 200K hits/day.
 
 **This is experimental software and any usage is at your own risk.**
 
-### Demo
+## Demo
 Visit http://botbouncer.xyz and refresh the page a few times to get banned.  Or just run the following from a *nix console:
 ```
 curl -s -S http://botbouncer.xyz && echo '---' && curl -s -S http://botbouncer.xyz
@@ -25,16 +75,16 @@ After your full payment has reached 0 confirmation(s), your IP address will be g
 ```
 If you make the Bitcoin payment then normal access to the demo site should be automatically restored. The demo site is configured to check for payments every 15 seconds or so.
 
-### Requirements
+## Requirements
 1. node.js express (version >= 4) web app
 2. BIP32 HD Bitcoin wallet (see [FAQ](#FAQ) if you don't have one)
 
-### Install and setup
+## Install and setup
 ```
 npm install botbouncer
 ```
 
-####Minimal usage example
+### Minimal usage example
 ```
 var express = require('express');
 var app = express();
@@ -70,7 +120,7 @@ return botbouncer.init({
 ```
 
 
-#### Full usage example: initialized using Q promise library and all options specified
+### Full usage example: initialized using Q promise library and all options specified
 ```
 var express = require('express');
 var BotBouncer = require('botbouncer');
@@ -208,13 +258,13 @@ return botbouncer.init({
 });
 ```
 
-##How does it work?
+## How does it work?
 botbouncer examines requests sent to the express server. If a request fails one of the bot detection routines, the offending IP address (a.k.a visitor) is banned.  Banned IP addresses are served a custom 402 PAYMENT REQUIRED response with a text body prompting the visitor to pay some Bitcoin for continued access to the site.  This response is served to the banned IP address for all subsequent requests until payment is confirmed.
 
 When a payment is confirmed and settled, the visitor is unbanned, and access is restored by allowing requests from the unbanned IP address to be served normally by the express server.
 
-##How does it work (technically)?
-####Bot detection
+## How does it work (technically)?
+### Bot detection
 Bots are detected using a series of basic detector modules.  Each detector inspects the visitor's request(s) for certain properties or behavior.
 
 The detectors are run after the express server's response is sent and the response object emits the "finish" event (as to not cause a slowdown to normal server request/response handling).  If a detector fails the request, the detection routine is ended, and the visitor's status is set to **banned**. The detector modules are described below and run in the following sequence by default:
@@ -233,7 +283,7 @@ Desirable visitors can be whitelisted when they pass a particular detector so th
 
 Every visitor's request is saved to the database until the visitor is assigned a particular status (**whitelisted**, **banned**, **allowed**, etc).
 
-####Response handling
+### Response handling
 On every incoming request, botbouncer queries its database for the request's IP address to determine the visitor's status (except for IP addresses matching those set in the **whitelistIp** config option, then no query is performed).If the visitor is **blacklisted** or **banned**, a payment request is created, or retrieved from the db if a pending request already exists for their IP address.  A new Bitcoin receiving address is generated for every new payment request, unless the **reuseExpiredPayment** option is enabled.
 
 botbouncer then "bounces" the **banned** visitor by responding with a 402 HTTP status code (PAYMENT REQUIRED) and plain text body similar to the following:
@@ -253,7 +303,7 @@ If you think this ban was made in error, or your are experiencing problems with 
 
 Additional payment request headers are also set in the response, see [FAQ](#FAQ).
 
-####Payments
+### Payments
 botbouncer currently only accepts Bitcoin payments and uses Bitcoin BIP32 deterministic address generation to get a unique address per payment request. A master public key from a BIP32 HD Bitcoin wallet must be provided in botbouncer's config options.
 
 Bitcoin payment monitoring is done via interval polling of the [blockr.io](https://blockr.io) API.  API requests are batched with 20 addresses per request.  Pending payment request addresses are checked until they're paid in full or their expiration date is surpassed.
@@ -264,7 +314,7 @@ If a payment request's address received total reaches the amount owed with the r
 
 When a paid visitor's **allowed** status expires, their IP address will still have access to the normal server, but their requests will once again be subject to bot detection, potentially resulting in another ban and a new payment request.
 
-####Database
+### Database
 botbouncer creates a sqlite3 database in [WAL journal mode](https://www.sqlite.org/wal.html)  to track visitors, requests, and the payments.  By default, the following database files are created in the current working directory:
 
 - botbouncer.db
@@ -278,7 +328,7 @@ If WAL journal mode is not supported by your file system, then botbouncer defaul
 
 See the [sqlite website](https://www.sqlite.org/tempfiles.html) for more details.
 
-#####Schema
+##### Schema
 
 Each IP address is treated as a unique visitor.  There are 4 tables in the main database:
 
@@ -291,7 +341,7 @@ botbouncer uses the [caminte](https://github.com/biggora/caminte) module as an O
 
 Based on passed config options, the database is pruned periodically of unneeded records to help keep it's size under control.
 
-###Config
+## Config
 Pass config options as first argument to ```botbouncer.init```. Config options are merged recursively with the default config options.  The only required config option is **dbConfig.database**. The **payment.bitcoin.masterPublicKey** is required if payments are enabled. 
 
 Nested options are written in dot notation below.
@@ -370,7 +420,7 @@ Nested options are written in dot notation below.
 |prune.timeout|int|300000 (5 minutes)|If prune lock has been on for longer than this many milliseconds, consider pruning failed/timed out and reset|
 |prune.vacuum|bool|true|Flag to compact sqlite3 database after pruning.|
 
-###Methods
+## Methods
 botbouncer methods intended for public usage.
 
 | method | description |
@@ -384,7 +434,7 @@ botbouncer methods intended for public usage.
 |getOpt| Returns botbouncer's config object.|
 | wipe| Deletes all data in the database. Use with caution.|
 
-####Example
+### Example
 Here's a quick example of looking up a visitor by IP and getting all their request and payment records.  See the [caminte](https://github.com/biggora/caminte) module for details on working with models and instances.
 
 ```
@@ -423,7 +473,7 @@ Visitor.find({where: {ip: '192.168.0.150'}}, function(err, visitors){
 });
 ```
 
-###Events
+## Events
 The following events are emitted by ```botbouncer.emitter```:
 - **error**: emitted when an error is encountered, passed an Error object
 - **detectVisitorStart**: emitted immediately prior to a visitor being subjected to the detector functions. passed a visitor object.  
@@ -445,7 +495,7 @@ botbouncer.emitter.on('error', function(err){
 });
 ```
 
-###Best practices
+## Best practices
 A few suggestions when using botbouncer:
 1. Don't let botbouncer process requests for static files (css, js, images, fonts, etc) because it really increases the chance that human visitors will be banned due to exceeded rate limits when their browser loads all that stuff.  This can be avoided by ensuring [express's built-in static middleware](http://expressjs.com/en/starter/static-files.html) is called prior to botbouncer's middleware:
 
@@ -501,7 +551,7 @@ A few suggestions when using botbouncer:
 ## FAQ
 Disclaimer: these aren't frequently asked questions because no one has ever asked these questions except me to myself.
 
-##### I don't have a Bitcoin BIP32 HD master public key.  How do I get one?
+### I don't have a Bitcoin BIP32 HD master public key.  How do I get one?
 Install [Electrum](https://electrum.org/) on your computer.  It's Bitcoin wallet software with BIP32 HD support. It also supports multiple wallets and easy access to each wallet's master public key. The downside is that it's an SPV client, so it's lacking in privacy as Electrum connects to a single 3rd party server capable of logging your IP address and Bitcoin addresses.
 
 1. Install Electrum.
@@ -513,10 +563,10 @@ Install [Electrum](https://electrum.org/) on your computer.  It's Bitcoin wallet
 wallet.storage.put('gap_limit',1000);
 ```
 
-##### Will botbouncer slow down my website?
+### Will botbouncer slow down my website?
 In my testing with a database of 55K visitor records, 88K payment records, and 360K request records, botbouncer added an average of 30ms to the server's response time.  For each request, botbouncer performs a single indexed query on the visitor's IP address.  If the visitor is banned, then an additional query or two is performed to get their payment request record and the next address derivation index if a new Bitcoin address has not yet been generated.
 
-##### Will Google penalize my website for cloaking?
+### Will Google penalize my website for cloaking?
 I doubt it. I've been running botbouncer on one of my websites for the last 2 months and traffic levels have remained static, and adsense earnings have even increased slightly.
 
 I don't intend to know the mind of Google, but [Matt Cutts says](https://support.google.com/webmasters/answer/2604723?hl=en) that cloaking "is showing different content to users than to Googlebot" and is determined by if "are you treating users the same way as you're treating Googlebot".
@@ -525,29 +575,29 @@ Personally, I wouldn't consider a bot to be a normal user. And even if a human u
 
 Besides, Google and Cloudflare already pull the exact same stuff.  Try accessing google.com from a VPN or proxy that bots have used, and you'll be shown an intermediate page forcing you to solve a CAPTCHA before you can continue to your original destination's content. So if you're penalized by Google for cloaking, you can safely accuse them of hypocrisy.
 
-#####I don't use Node.js and/or Express. Can I still use botbouncer?
+### I don't use Node.js and/or Express. Can I still use botbouncer?
 No. But someday maybe I'll add a standalone mode to botbouncer so that it can be installed and run as a server that interfaces via an API with your own (PHP/Ruby/Python/whatever) web server. I think this would be far easier than trying to port it to other popular languages.
 
-#####Don't you know that you can't equate an IP address with a single visitor because of NAT, proxies, VPN's, what have you?
+### Don't you know that you can't equate an IP address with a single visitor because of NAT, proxies, VPN's, what have you?
 Yup, but that's just how this thing works right now. The alternatives, such as session cookies or fingerprinting, are either impractical or ineffective. If you have a better idea, I'll listen.
 
-#####So that means if a bot is using a proxy/VPN and pays for access to my website, then any other bots using the same proxy/VPN get access to my website for free?
+### So that means if a bot is using a proxy/VPN and pays for access to my website, then any other bots using the same proxy/VPN get access to my website for free?
 Yes.
 
-#####Can a regular human visitor get banned by botbouncer?
+### Can a regular human visitor get banned by botbouncer?
 Yes.  If the human's browser is changing ua strings on every request, or they exceed the request rate limits, or engage in other bot-like behavior that trips one of the detectors, they'll be banned.  But of course the goal is to keep false positives to a minimum.
 
-#####What recourse does a regular human visitor have if they are determined to be a bot and are banned?
+### What recourse does a regular human visitor have if they are determined to be a bot and are banned?
 Besides paying up, not much. They can email the administrator alerting them of the situation. That's why webmasters are strongly suggested to include an email address they can be reached in the bounce body message via the **adminEmail** config setting.
 
-#####Couldn't a banned bot operator pose as a regular human visitor and just email the admin asking for access?
+### Couldn't a banned bot operator pose as a regular human visitor and just email the admin asking for access?
 Yes. That's why webmasters are also suggested to run a report on the visitor's IP when an unban request is received from a stranger on the internet. Check their request history, IP address hostname, why they were banned, and make an educated decision whether the unban request is actually legit, or just a bot operator posing as an innocent human.  You can get a report on an IP address like so:
 
 ```
 node /path/to/your/app/node_modules/botbouncer/admin.js report --ip X.X.X.X --db /path/to/your/botbouncer.db
 ```
 
-##### Can the entire payments functionality be disabled?
+### Can the entire payments functionality be disabled?
 Yes, pass this flag in your config options:
 ```
 payment: {
@@ -556,7 +606,7 @@ payment: {
 ...
 ```
 
-#####Bitcoin is stupid and dead. Can you make this thing work with Paypal?
+### Bitcoin is stupid and dead. Can you make this thing work with Paypal?
 People keep saying Bitcoin is dead. But it still works for me, so I don't know what to tell you.
 
 Wait, yes I do. I think cryptocurrency is the ideal payment method here because it doesn't require the parties involved to know much about each other. Think of it this way: if you were scraping a website and got banned by the site's admin, but still really needed access, would you want to hand over your personal info (name/email address/billing details/etc) when you pay them for continued access? Nope, a pseudonymous payment just makes more sense.
@@ -565,22 +615,22 @@ Also, a sufficiently confirmed Bitcoin transaction is quite permanent.  Centrali
  
 But if you really want Paypal support, or some other payment processor, contact me and I'll see what I can do.  It will cost you many bitcoins. I am also open to adding support for other popular cryptocurrencies/altcoins.
 
-#####Can I require everyone to pay me for access to my website, even if they're not a bot?
+### Can I require everyone to pay me for access to my website, even if they're not a bot?
 Not yet.  But I'm thinking of adding a **blacklistIp** config option added soon where you could simply blacklist the entire internet in the botbouncer config options like this:
 
 ```
 blacklistIp: '0.0.0.0/0'
 ```
 
-#####Will botbouncer prevent (D)DoS attacks? 
+### Will botbouncer prevent (D)DoS attacks? 
 No botbouncer probably won't help much against a DDoS. A severe enough attack will jam your network up before it jams your node.js app server up.  Even if the attack is less severe and requests are making it to your app server, botbouncer visitors are identified by IP address, so many IPs = many visitors.
 
 botbouncer might help defend against lightweight DoS attacks because it will ban a visitor's IP when they exceed your rate limit and will prevent the request from continuing on to be handled by your web app. But, botbouncer queries it's file-based sqlite3 database on each request to determine the IP's status, so an inordinate amount of these queries due to a DoS attempt may overload your app.
 
-#####I use cluster to fork my express server process. Is botbouncer multi-process safe?
+### I use cluster to fork my express server process. Is botbouncer multi-process safe?
 It *should* be because botbouncer uses sqlite3 transactions to keep changes to records atomic, and thus avoid race conditions across multiple processes, but this has not yet been tested on a multi-process server.  If you're brave and want to try it out, I would suggest disabling all interval background processing (like checking payments and database pruning) and instead running those via cronjobs.  A multi-process express server will create multiple botbouncer instances, and botbouncer *should* prevent concurrent runs of background processing routines (via storing states in the database), but it's still better to be safe about it until multi-process stuff is fully tested.
 
-######How to do this
+#### How to do this
 1. Disable all interval background processing in your botbouncer config:
 ```
 ...
@@ -600,7 +650,7 @@ payment:{
 0 2 * * *  someuser    node /path/to/your/app/node_modules/botbouncer/admin.js prune --db /path/to/your/botbouncer.db
 ```
 
-##### Does botbouncer set any machine readable response headers indicating the payment method, amount, etc? [faqheaders]
+### Does botbouncer set any machine readable response headers indicating the payment method, amount, etc?
 Yes, there are four headers, here's an example:
 
 ```
@@ -611,36 +661,36 @@ X-Payment-Amount-Unit-Bitcoin: BTC
 ```
 The header names are formatted so that multiple payment methods could be accepted and transmitted in a single 402 PAYMENT REQUIRED response. For example, the "X-Payment-Types-Accepted" header value may one day be a comma separated string of payment methods, maybe something like this: ```Bitcoin,Litecoin,Ethereum,Dogecoin``` with additional address, amount, unit headers for each of those payment methods.
 
-#####Do these headers follow any kind of standardized protocol?
+### Do these headers follow any kind of standardized protocol?
 No. They were borrowed from [Casey Leonard](http://thoughts.amphibian.com/2015/05/using-http-402-for-bitcoin-paywall.html) because they seemed to be the most extendable and informative headers proposed so far. I added "X-Payment-Amount-Unit-*" (example values would be things like BTC, mBTC, µBTC/uBTC, satoshi/satoshis, etc) because I think it makes sense to be provide as many details as possible so any crawling automata that want to make automated payments don't get confused (currently botbouncer only specifies BTC as this header's value).
 
-#####Why is the banned response message in plain text and not HTML? 
+### Why is the banned response message in plain text and not HTML? 
 Generally speaking, it's easier on the bot operators' eyeballs. Once they notice that their bot is encountering 402 errors on every request to your site, they'll most likely ask themselves "WTF is a 402?" and then manually inspect the response body from a console or log file. So hopefully this response body is a bit easier for them to read than picking through raw HTML.
 
 This does have the drawback of looking wacky to a legitimate browser user who has been banned from your site by mistake. You can render your own HTML response message by passing a custom function as the message file path, or changing the response body on the ```bouncePre``` event.
 
-#####How does botbouncer handle errors?
+### How does botbouncer handle errors?
 Errors are not thrown or passed to express's next() function.  Instead an error event is emitted. That means that if botbouncer fails in some way your website should still work instead of erroring with a 500 status code.
 
 Is handling unban requests via email clunky? Yes, but it's the best option at the moment. Perhaps in the future an alternative such as a CAPTCHA + cookie (like Google and Cloudflare do) can be implemented, though this technique can also be circumvented by a bot operator.
 
-#####Does botbouncer work on windows?
+### Does botbouncer work on windows?
 Don't know, don't care. I'm open to pull requests for windows support, but I wont' be adding it myself unless someone pays me muchos bitcoinos.
 
-#####Will you add feature ABC and cool thing XYZ?
+### Will you add feature ABC and cool thing XYZ?
 I'll add nearly anything if you pay me. Otherwise probably not, but I'll gladly accept pull requests.
 
-#####Do you have a bitcoin tipping address?
+### Do you have a bitcoin tipping address?
 Yes, thanks for asking:
 ```
 1MUUyS4y4w4NsV4acD2XiDmAV1zMN92PS5
 ```
 
-##Release history
+## Release history
 
-###### 2016-04-27 v0.0.4
+### 2016-04-27 v0.0.4
 initial release
 
-##About
+## About
 
 Congrats on making it this far.  botbouncer was inspired by a prior project I did with [Jesse Powell](https://github.com/jespow) called [Elephant Grass](https://github.com/timbowhite/elephant-grass-gmail), which was a similar idea, except for email. While that one didn't turn out to be a homerun, I think the idea of automated, private payments and provisioning with the lack of human involvement is extremely cool. So perhaps the perfect compliment to botbouncer would be web scraping software with an integrated bitcoin wallet. Maybe it could be called benefactorbot. Or subscraper. Give it a small bitcoin allowance and set it loose scraping the web, paying sites within configurable limits. Then perhaps we'll be one step closer to the dream of making the machines do all the work, while they pay each other magic internet money, and we can go have a beer.
