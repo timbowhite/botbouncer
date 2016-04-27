@@ -251,7 +251,7 @@ After your full payment has reached 1 confirmation(s), your IP address will be g
 If you think this ban was made in error, or your are experiencing problems with your payment, please contact the website administrator at foo@bar.com and include your IP address (167.213.68.157) in your message.
 ```
 
-Additional payment request headers are also set in the response, see [FAQ](#faqheaders).
+Additional payment request headers are also set in the response, see [FAQ](#FAQ).
 
 ####Payments
 botbouncer currently only accepts Bitcoin payments and uses Bitcoin BIP32 deterministic address generation to get a unique address per payment request. A master public key from a BIP32 HD Bitcoin wallet must be provided in botbouncer's config options.
@@ -297,7 +297,7 @@ Pass config options as first argument to ```botbouncer.init```. Config options a
 Nested options are written in dot notation below.
 
 | option | type | default | description |
-|--------|--------||--------||--------|
+| --- | --- | ---| --- |
 |includePath|array of strings/regexp|[]|Array of strings and/or regexp. Requests with paths matching any of the supplied array elements will be processed by botbouncer. All others will be ignored. Strings are case sensitive. This option can't be combined with excludePath option.|
 |excludePath|array of strings/regexp|[]|Array of strings and/or regexp. Requests with paths matching any of the supplied array elements will ignored by botbouncer. All other requests will be processed. Strings are case sensitive. This option can't be combined with includePath option.|
 |whitelistIp|array of strings|ipv4/6 CIDR's of local/private networks|Array of CIDR notation strings representing network IP address ranges to ignore. NOTE: visitors with matching IP's are not stored in the database.|
@@ -328,7 +328,7 @@ Nested options are written in dot notation below.
 |bounce.contentType|string|text/plain; charset=UTF-8|content type header of bounced response|
 |bounce.statusCode|int|402|HTTP response code of bounced response|
 |bounce.body|object|N/A|Bounced response body content options|
-|bounce.body.banned|string,function|content/en/body/banned-payment-request.txt|File path to an ejs template file to be rendered and set in the response's body. Or a function that renders the response body, and is passed arguments: req, res, visitor, done. done is a callback that must be passed the body content as an argument.|
+|bounce.body.banned|string/function|content/en/body/banned-payment-request.txt|File path to an ejs template file to be rendered and set in the response's body. Or a function that renders the response body, and is passed arguments: req, res, visitor, done. done is a callback that must be passed the body content as an argument.|
 |bounce.adminEmail|string|undefined|email address to display in the payment request body text|
 |**detectors**||||
 |**detectors.ua-bot**|||Detects if the request's user agent string matches known bots or keywords.|
@@ -498,7 +498,7 @@ A few suggestions when using botbouncer:
 8. Use a separate Bitcoin wallet and BIP32 master public key for each node.js express app that uses botbouncer.  If you don't, the generated addresses will be the same, and any payments would be credited to each app for different visitors.
 
 
-##FAQ
+## FAQ
 Disclaimer: these aren't frequently asked questions because no one has ever asked these questions except me to myself.
 
 ##### I don't have a Bitcoin BIP32 HD master public key.  How do I get one?
