@@ -76,7 +76,7 @@ If you make the Bitcoin payment then normal access to the demo site should be au
 
 ## Requirements
 1. node.js express (version >= 4) web app
-2. BIP32 HD Bitcoin wallet (see [FAQ](#FAQ) if you don't have one)
+2. BIP32 HD Bitcoin wallet (see [FAQ](#faq) if you don't have one)
 
 ## Install and setup
 ```
@@ -300,7 +300,7 @@ After your full payment has reached 1 confirmation(s), your IP address will be g
 If you think this ban was made in error, or your are experiencing problems with your payment, please contact the website administrator at foo@bar.com and include your IP address (167.213.68.157) in your message.
 ```
 
-Additional payment request headers are also set in the response, see [FAQ](#FAQ).
+Additional payment request headers are also set in the response, see [FAQ](#faq).
 
 ### Payments
 botbouncer currently only accepts Bitcoin payments and uses Bitcoin BIP32 deterministic address generation to get a unique address per payment request. A master public key from a BIP32 HD Bitcoin wallet must be provided in botbouncer's config options.
@@ -543,7 +543,7 @@ A few suggestions when using botbouncer:
 4. Listen to the "paymentSettled" and/or "paymentPartial" events, and log them or send yourself an email as a secondary measure to know if you've been paid and if you need to update your wallet's gap limit.
 5. Listen to the "error" event and log errors.
 6. Specify an email address where you can be reached in the **adminEmail** config option, or include one in your custom banned response text.  If you still want humans on your website, it's best to ensure they can contact you if they're erroneously banned.
-7. It's not currently recommended to use botbouncer on a forking/multi-process express server, see [FAQ](#FAQ) below.
+7. It's not currently recommended to use botbouncer on a forking/multi-process express server, see [FAQ](#faq) below.
 8. Use a separate Bitcoin wallet and BIP32 master public key for each node.js express app that uses botbouncer.  If you don't, the generated addresses will be the same, and any payments would be credited to each app for different visitors.
 
 
