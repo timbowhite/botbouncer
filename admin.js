@@ -135,7 +135,9 @@ Q().then(function(){
         case 'set-status':
             var where = {ip: argv['ip']},
                 Visitor = botbouncer.getModelVisitor(),
+                Payment = botbouncer.getModelPayment(),
                 vs = Visitor.getStatuses(),
+                ps = Payment.getStatuses(),
                 status = argv.status; 
 
             if (typeof(status) !== 'string' || ! lo.includes(cmds['set-status'].opt.status.ex, status.toUpperCase())){
@@ -164,7 +166,21 @@ Q().then(function(){
 
                     return Q.ninvoke(visitor, 'save') 
                     .then(function(v){
-                        botbouncer.debug('Visitor status updated', v);
+                        visitor = v;
+                        
+                        // set their pending payment to expired
+                        if (! visitor.status_id === null || 
+                            lo.includes([ps.WHITELISTED, ps.ALLOWED], visitor.status_id)){
+                            return Q.ninvoke(
+                                Payment, 
+                                'update', 
+                                {visitor_id: visitor.id, status_id: ps.PENDING}, 
+                                {status_id: ps.EXPIRED}
+                            );
+                        }
+                    })
+                    .then(function(){
+                        botbouncer.debug('Visitor status updated', visitor);
                     });
                 });
             });
