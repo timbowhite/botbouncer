@@ -638,7 +638,7 @@ Yes, thanks for asking:
 
 ##Release history
 
-###### 2016-04-27 v0.0.3
+###### 2016-04-27 v0.0.4
 initial release
 
 ##About

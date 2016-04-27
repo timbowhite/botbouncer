@@ -1,6 +1,6 @@
 {
   "name": "botbouncer",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Detect bots and ban them from your website until they pay you Bitcoin.",
   "main": "index.js",
   "scripts": {
