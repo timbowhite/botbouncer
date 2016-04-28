@@ -639,7 +639,6 @@ A few suggestions when using botbouncer:
 
 
 ## FAQ
-Disclaimer: these aren't frequently asked questions because no one has ever asked these questions except me to myself.
 
 ### I don't have a Bitcoin BIP32 HD master public key.  How do I get one?
 Install [Electrum](https://electrum.org/) on your computer.  It's Bitcoin wallet software with BIP32 HD support. It also supports multiple wallets and easy access to each wallet's master public key. The downside is that it's an SPV client, so it's lacking in privacy as Electrum connects to a single 3rd party server capable of logging your IP address and Bitcoin addresses.
