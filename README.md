@@ -587,6 +587,8 @@ NOTE: the admin.js script does not currently have a way to read in your own conf
 
 ## Best practices
 A few suggestions when using botbouncer:
+
+
 1. Don't let botbouncer process requests for static files (css, js, images, fonts, etc) because it really increases the chance that human visitors will be banned due to exceeded rate limits when their browser loads all that stuff.  This can be avoided by ensuring [express's built-in static middleware](http://expressjs.com/en/starter/static-files.html) is called prior to botbouncer's middleware:
 
     ```
