@@ -79,7 +79,7 @@ QR code: https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|2&chl=bitc
 
 After your full payment has reached 0 confirmation(s), your IP address will be granted access for a month.
 ```
-If you make the Bitcoin payment then normal access to the demo site should be automatically restored. The demo site is configured to check for payments every 15 seconds or so.
+If you make the Bitcoin payment, wait a few seconds and refresh the page, and access to the demo site should be automatically restored. The demo site is configured to check for zero confirmation Bitcoin payments every 15 seconds or so.
 
 ## Requirements
 1. node.js express (version >= 4) web app
