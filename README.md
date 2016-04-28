@@ -23,6 +23,12 @@ It's intended for use by websites running on a single app server that receive <=
 * [Methods](#methods)
   * [Example](#example)
 * [Events](#events)
+* [Admin script](#admin-script)
+  * [Unban a visitor](#unban-a-visitor)
+  * [Get a report on the database](#get-a-report-on-the-database)
+  * [Get a report on an IP address](#get-a-report-on-an-ip-address)
+  * [Check payments](#check-payments)
+  * [Prune](#prune)
 * [Best practices](#best-practices)
 * [FAQ](#faq)
   * [I don't have a Bitcoin BIP32 HD master public key.  How do I get one?](#i-dont-have-a-bitcoin-bip32-hd-master-public-key--how-do-i-get-one)
@@ -50,6 +56,7 @@ It's intended for use by websites running on a single app server that receive <=
 * [Release history](#release-history)
   * [2016-04-27 v0.0.4](#2016-04-27-v004)
 * [About](#about)
+
 
     
 <!-- toc stop -->
@@ -493,6 +500,90 @@ botbouncer.emitter.on('error', function(err){
     console.error('botbouncer error', err);
 });
 ```
+
+## Admin script
+The botbouncer module comes with an ```admin.js``` utility script for doing things like unbanning visitors, running reports, checking payments, and other stuff.
+
+### Unban a visitor
+Run the following to unban an IP address and expire their payment request.  
+
+```
+node ./node_modules/botbouncer/admin.js set-status --ip X.X.X.X --status null --db /path/to/your/botbouncer.db
+```
+
+Replacing ```--status null``` with ```--status allowed``` will treat the visitor as if they'd paid and the IP address will not be subjected to bot detection (and being potential banned again) for 30 days (see NOTE).  With ```--status null```, the visitor will be unbanned but still subjected to bot detection and potential banishment.
+
+### Get a report on the database
+Run the following to get an overview report containing:
+
+* list of database files and their sizes
+* visitor status counts
+* payment status counts
+* request record count
+* visitor banned reason counts
+
+```
+node ./node_modules/botbouncer/admin.js report --db /path/to/your/botbouncer.db
+```
+
+### Get a report on an IP address
+To get a human readable report about a visitor by IP address, including their request and payment records, run the following:
+
+```
+node ./node_modules/botbouncer/admin.js report --ip X.X.X.X --db /path/to/your/botbouncer.db
+```
+This will output something like this:
+```
+┌────────────────┬─────────────────────┐
+│ visitor        │                     │
+├────────────────┼─────────────────────┤
+│ ip             │ X.X.X.X             │
+├────────────────┼─────────────────────┤
+│ ipv            │ 4                   │
+├────────────────┼─────────────────────┤
+│ hostname       │ null                │
+├────────────────┼─────────────────────┤
+│ created        │ 2016-04-26T16:38:17 │
+├────────────────┼─────────────────────┤
+│ status         │ BANNED              │
+├────────────────┼─────────────────────┤
+│ status_reason  │ ua-impostor         │
+├────────────────┼─────────────────────┤
+│ status_set     │ 2016-04-26T16:38:17 │
+├────────────────┼─────────────────────┤
+│ status_expires │ 2016-05-26T16:38:17 │
+├────────────────┼─────────────────────┤
+│ id             │ 170952              │
+└────────────────┴─────────────────────┘
+┌────────────┬────────┬───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ request    │        │                                                                                                                           │
+├────────────┼────────┼───────────────────────────┬───────────────────────────────────────────────────────────────┬─────────────────────┬─────────┤
+│ visitor_id │ method │ url                       │ user-agent                                                    │ requested           │ id      │
+├────────────┼────────┼───────────────────────────┼───────────────────────────────────────────────────────────────┼─────────────────────┼─────────┤
+│ 170952     │ get    │ http://example.com/?xyz=1 │ Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.c… │ 2016-04-26T16:38:17 │ 2250981 │
+└────────────┴────────┴───────────────────────────┴───────────────────────────────────────────────────────────────┴─────────────────────┴─────────┘
+┌────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ payment    │                                                                                                                                                                     │
+├────────────┼───────────┬────────────────────────────────────┬─────────────┬─────────────┬──────────────┬─────────────────────┬─────────────────────┬─────────────────────┬───────┤
+│ visitor_id │ status_id │ address                            │ amount_owed │ amount_rcvd │ derive_index │ expires             │ created             │ updated             │ id    │
+├────────────┼───────────┼────────────────────────────────────┼─────────────┼─────────────┼──────────────┼─────────────────────┼─────────────────────┼─────────────────────┼───────┤
+│ 170952     │ PENDING   │ 18zKfp3D39c9eC4QyoUbTicuiSyPCrQ95h │ 5000000     │ 0           │ 88292        │ 2016-04-29T16:38:22 │ 2016-04-26T16:38:22 │ 2016-04-28T12:18:36 │ 88293 │
+└────────────┴───────────┴────────────────────────────────────┴─────────────┴─────────────┴──────────────┴─────────────────────┴─────────────────────┴─────────────────────┴───────┘
+```
+
+### Check payments
+Manually check for payments on all pending payment requests like this:
+```
+node ./node_modules/botbouncer/admin.js check-payments --db /path/to/your/botbouncer.db
+```
+
+### Prune
+Manually prune the database like this:
+```
+node ./node_modules/botbouncer/admin.js prune --db /path/to/your/botbouncer.db
+```
+
+NOTE: the admin.js script does not currently have a way to read in your own config options, so the botbouncer [config defaults](#config) are used.  This will be eventually and probably be fixed by adding support for config files.  In the meantime, if you want to use your own config settings, manually copy/paste them in the admin.js script.
 
 ## Best practices
 A few suggestions when using botbouncer:
