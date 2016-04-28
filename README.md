@@ -373,6 +373,8 @@ Nested options are written in dot notation below.
 |**payment.bitcoin**|||Bitcoin payment options|
 |payment.bitcoin.amount|number|0.05|Amount of Bitcoin (BTC) to charge banned visitors for continued access.|
 |payment.bitcoin.masterPublicKey|string||BIP32 HD master public key.  Should be a large string that looks like 'xpub...'|
+|payment.bitcoin.deriveIndexStart|int|0|beginning index for hdpubkey address derivation|
+|payment.bitcoin.network|string|livenet|livenet/testnet|
 |payment.bitcoin.confirmations|int|1|# of confirmations to consider payment settled, max = 15 b/c of blockr.io limits|
 |payment.bitcoin.reuseExpiredPayment|bool|false|Flag to use expired payment addresses if possible, instead of generating a new payment request. This will help keep the # of payment requests records low at the cost of altering past payment request records.|
 |payment.bitcoin.requestOpt|object|{}|Additional options to pass to the [request](https://github.com/request/request) module when making API calls.|
