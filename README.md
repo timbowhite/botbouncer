@@ -357,7 +357,7 @@ Nested options are written in dot notation below.
 |includePath|array of strings/regexp|[]|Array of strings and/or regexp. Requests with paths matching any of the supplied array elements will be processed by botbouncer. All others will be ignored. Strings are case sensitive. This option can't be combined with excludePath option.|
 |excludePath|array of strings/regexp|[]|Array of strings and/or regexp. Requests with paths matching any of the supplied array elements will ignored by botbouncer. All other requests will be processed. Strings are case sensitive. This option can't be combined with includePath option.|
 |whitelistIp|array of strings|ipv4/6 CIDR's of local/private networks|Array of CIDR notation strings representing network IP address ranges to ignore. NOTE: visitors with matching IP's are not stored in the database.|
-|allowedDuration|int|2592000000 (3 days)|# of milliseconds an allowed user should retain their allowed status. This only applies to visitors who have passed a bot detector with the **allowOnPass** option eneabld (not those visitor who have paid money). Once the allowed status expires, the visitor will be bot detected again.|
+|allowedDuration|int|2592000000 (3 days)|# of milliseconds an allowed user should retain their allowed status. This only applies to visitors who have passed a bot detector with the **allowOnPass** option enabled (see the payment.allowedDuration config option for visitors who have paid money). Once the allowed status expires, the visitor will be bot detected again.|
 |banDuration|int|2592000000 (3 days)|# of milliseconds a banned user should remain banned for. Once the banned status expires, the visitor will be detected again.|
 |detectFrequency|int|1000|Only run the detectors after a visitor's request if it's been this many milliseconds since the visitor's last request,o r it's their first request. The delay helps limit multiple bot detection runs on the same visitor. 0 to disable.|
 |lookupHostname|bool|true|Flag to do a reverse dns lookup on the visitor's ip address before the visitor record is saved to the database.|
@@ -764,8 +764,6 @@ This does have the drawback of looking wacky to a legitimate browser user who ha
 
 ### How does botbouncer handle errors?
 Errors are not thrown or passed to express's next() function.  Instead an error event is emitted. That means that if botbouncer fails in some way your website should still work instead of erroring with a 500 status code.
-
-Is handling unban requests via email clunky? Yes, but it's the best option at the moment. Perhaps in the future an alternative such as a CAPTCHA + cookie (like Google and Cloudflare do) can be implemented, though this technique can also be circumvented by a bot operator.
 
 ### Does botbouncer work on windows?
 Don't know, don't care. I'm open to pull requests for windows support, but I wont' be adding it myself unless someone pays me muchos bitcoinos.
