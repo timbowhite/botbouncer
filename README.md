@@ -779,6 +779,9 @@ Yes, thanks for asking:
 
 ## Release history
 
+### 2016-05-07 v0.0.5
+Fixed "ReferenceError: moment is not defined" error in admin.js script
+
 ### 2016-04-27 v0.0.4
 initial release
 
