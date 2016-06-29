@@ -779,6 +779,9 @@ Yes, thanks for asking:
 
 ## Release history
 
+### 2016-06-29 v0.0.6
+Fixed "ReferenceError: detector is not defined" error in lib/botbouncer.js script
+
 ### 2016-05-07 v0.0.5
 Fixed "ReferenceError: moment is not defined" error in admin.js script
 
