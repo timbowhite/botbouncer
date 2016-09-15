@@ -779,6 +779,10 @@ Yes, thanks for asking:
 
 ## Release history
 
+### 2016-09-15 v0.0.7
+* bump sqlite3 to 3.1.4 (compatible with node v6)
+* ua-impostor: catch EINVAL dns lookup errors as fake bots 
+
 ### 2016-06-29 v0.0.6
 Fixed "ReferenceError: detector is not defined" error in lib/botbouncer.js script
 

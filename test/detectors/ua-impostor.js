@@ -84,7 +84,7 @@ describe("ua-impostor detector", function() {
                     r.fromExpressRequest(bot);
                     r.visitor_id = 999;
 
-                    return uaimpostor.pass({visitor: v, requests: r}); 
+                    return uaimpostor.pass({visitor: v, requests: r});
                 })
                 .then(function(valid){
                     expect(valid).to.equal(false);
