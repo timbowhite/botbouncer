@@ -386,7 +386,7 @@ Nested options are written in dot notation below.
 |bounce.contentType|string|text/plain; charset=UTF-8|content type header of bounced response|
 |bounce.statusCode|int|402|HTTP response code of bounced response|
 |bounce.body|object|N/A|Bounced response body content options|
-|bounce.body.banned|string/function|content/en/body/banned-payment-request.txt|File path to an ejs template file to be rendered and set in the response's body. Or a function that renders the response body, and is passed arguments: req, res, visitor, done. done is a callback that must be passed the body content as an argument.|
+|bounce.body.banned|string/function|content/en/body/banned-payment-request.txt|File path to an ejs template file to be rendered and set in the response's body. Or a function that renders the response body, and is passed 2 arguments: an object containing: (req: request object, res: response object, visitor: visitor object), and done. done is a completion callback that can be passed either the string body content as an argument, or ```null``` to cancel the bounce and allow the request to continue normally.|
 |bounce.adminEmail|string|undefined|email address to display in the payment request body text|
 |**detectors**||||
 |**detectors.ua-bot**|||Detects if the request's user agent string matches known bots or keywords.|
@@ -778,6 +778,9 @@ Yes, thanks for asking:
 ```
 
 ## Release history
+
+### 2016-12-19 v0.0.9
+Added ability to abort a bounce if a custom function set at ```bounce.body.banned``` returns ```null```
 
 ### 2016-12-19 v0.0.8
 * ua-switching: fix logic bug with checking minimum requests/timeframe options 
