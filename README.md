@@ -779,7 +779,7 @@ Yes, thanks for asking:
 
 ## Release history
 
-### 2016-12-19 v0.0.9
+### 2017-03-05 v0.0.9
 Added ability to abort a bounce if a custom function set at ```bounce.body.banned``` returns ```null```
 
 ### 2016-12-19 v0.0.8
