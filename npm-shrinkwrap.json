@@ -1,6 +1,6 @@
 {
   "name": "botbouncer",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "dependencies": {
     "bignumber.js": {
       "version": "2.1.4",
@@ -121,9 +121,9 @@
       "resolved": "https://registry.npmjs.org/ipware/-/ipware-0.0.7.tgz"
     },
     "isbot": {
-      "version": "2.0.0",
-      "from": "isbot@2.0.0",
-      "resolved": "https://registry.npmjs.org/isbot/-/isbot-2.0.0.tgz"
+      "version": "2.0.2",
+      "from": "isbot@2.0.2",
+      "resolved": "https://registry.npmjs.org/isbot/-/isbot-2.0.2.tgz"
     },
     "lockfile": {
       "version": "1.0.1",
