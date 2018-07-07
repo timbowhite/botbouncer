@@ -6,6 +6,8 @@ It's intended for use by websites running on a single app server that receive <=
 
 **This is experimental software and any usage is at your own risk.**
 
+## IMPORTANT NOTE: Bitcoin payment settlement checking no longer works as the blockr.io API is no longer available. 
+
 <!-- toc -->
 * [Demo](#demo)
 * [Requirements](#requirements)
@@ -778,6 +780,9 @@ Yes, thanks for asking:
 ```
 
 ## Release history
+
+### 2018-07-07 v0.0.11
+Update some dependencies to their latest versions 
 
 ### 2017-03-07 v0.0.10
 Update isbot module to latest

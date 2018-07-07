@@ -46,7 +46,7 @@ var httpMocks = require('node-mocks-http'),
                 }
             },
             yandexbot: {
-                ip: '141.8.143.211',
+                ip: '141.8.153.211',
                 headers: {
                     'user-agent': 'Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)', 
                 }
