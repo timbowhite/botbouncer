@@ -781,7 +781,7 @@ Yes, thanks for asking:
 
 ## Release history
 
-### 2022-01-14 v0.0.13
+### 2022-01-14 v0.0.14
 Update some dependencies 
 
 ### 2018-07-07 v0.0.11
