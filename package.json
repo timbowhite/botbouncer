@@ -1,6 +1,6 @@
 {
   "name": "botbouncer",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Detect bots and ban them from your website until they pay you Bitcoin.",
   "main": "index.js",
   "scripts": {
@@ -27,7 +27,7 @@
     "q": "^1.4.1",
     "request": "^2.87.0",
     "semver": "^5.1.0",
-    "sqlite3": "^4.0.1",
+    "sqlite3": "^5.0.2",
     "sqlite3-transactions": "github:anszom/sqlite3-transactions#43d33f82",
     "useragent": "^2.3.0",
     "validator": "^4.2.1",
